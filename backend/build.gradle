@@ -30,6 +30,8 @@ dependencies {
 }
 
 appengine {
+    httpAddress = "0.0.0.0" // don't bind to a particular host so we can access it from a physical device on the same network
+    httpPort = 8080
     downloadSdk = true
     appcfg {
         oauth2 = true

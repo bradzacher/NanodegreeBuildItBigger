@@ -1,12 +1,15 @@
 apply plugin: 'com.android.application'
 
+configurations {
+    all*.exclude group: 'com.android.support', module: 'support-v7'
+}
+
 android {
     compileSdkVersion 22
     buildToolsVersion "22.0.1"
-
     defaultConfig {
         applicationId "au.com.zacher.builditbigger"
-        minSdkVersion 10
+        minSdkVersion 11
         targetSdkVersion 22
         versionCode 1
         versionName "1.0"
@@ -15,17 +18,30 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            resValue "string", "server_url", "" // TODO - this needs to be fixed when a deployment server is decided on
+        }
+        debug {
+            resValue "string", "server_url", "http://bzdesktop:8080/_ah/api"
+        }
+    }
+    productFlavors {
+        free {
+            applicationId 'au.com.zacher.builditbigger.free'
+            dependencies {
+                compile 'com.google.android.gms:play-services-ads:7.8.0'
+            }
+        }
+        paid {
+            applicationId 'au.com.zacher.builditbigger.paid'
         }
     }
 }
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
-    // Added for AdMob
-    compile project(path: ':jokeslib')
+    compile fileTree(include: ['*.jar'], dir: 'libs')
     compile project(path: ':jokeactivities')
-    compile 'com.android.support:appcompat-v7:22.1.1'
-    compile 'com.google.android.gms:play-services:7.8.0'
-    compile 'com.jakewharton:butterknife:7.0.1'
     compile project(path: ':backend', configuration: 'android-endpoints')
+    compile 'com.android.support:appcompat-v7:22.1.1'
+
+    freeCompile 'com.google.android.gms:play-services-ads:7.8.0'
 }

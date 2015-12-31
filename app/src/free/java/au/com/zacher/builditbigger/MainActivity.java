@@ -7,18 +7,17 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
-import au.com.zacher.builditbigger.jokes.Joker;
+import au.com.zacher.builditbigger.endpoint.BackendAsyncTask;
+import au.com.zacher.builditbigger.endpoint.IBackendAsyncTaskCallback;
 import au.com.zacher.jokeactivities.JokeActivity;
 
 
-public class MainActivity extends ActionBarActivity {
-
+public class MainActivity extends ActionBarActivity implements IBackendAsyncTaskCallback {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         this.setContentView(R.layout.activity_main);
     }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -42,11 +41,23 @@ public class MainActivity extends ActionBarActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    public void tellJoke(View view){
-        Joker  j    = new Joker();
-        String joke = j.getJoke();
+    /**
+     * Talks to the endpoint, gets a joke and displays it
+     */
+    public void tellJoke(View v){
+        BackendAsyncTask task = new BackendAsyncTask();
+        task.execute(this);
+    }
+
+    @Override
+    public void randomJokeReceived(String joke) {
         Intent i    = new Intent(this, JokeActivity.class);
         i.putExtra(JokeActivity.JOKE_INTENT_EXTRA, joke);
         this.startActivity(i);
+    }
+
+    @Override
+    public void errorReceived(String error) {
+        this.randomJokeReceived(error);
     }
 }
